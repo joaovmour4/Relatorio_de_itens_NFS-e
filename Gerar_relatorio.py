@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.filedialog import *
 import xml.etree.ElementTree as Et
 import openpyxl
-from openpyxl.styles.borders import Border, Side
+from openpyxl.styles.borders import Border
 
 
 def collect_arquivo(entry):
@@ -28,11 +28,6 @@ def executar(arquivo, directory):
     blue1Fill = openpyxl.styles.PatternFill(start_color='CCECFF',
                                             end_color='CCECFF',
                                             fill_type='solid')
-
-    thin_border = Border(left=Side(style='thin'),
-                         right=Side(style='thin'),
-                         top=Side(style='thin'),
-                         bottom=Side(style='thin'))
 
     sheet.column_dimensions['B'].width = 16
     sheet.column_dimensions['C'].width = 16
@@ -86,23 +81,23 @@ def executar(arquivo, directory):
                         i += 2
         i += 2
 
-    wb.save(f'{directory}/Relatorio.xlsx')
+    wb.save(f'{directory}/Relatorio-NFS-e_{root[0][0][3].text}.xlsx')
 
 
 janela = Tk()
-janela.geometry('400x200')
+janela.geometry('600x200')
 janela.title('Gerar relatório de NFS-e')
 
+Label(janela, text='Diretório do arquivo XML:').grid(column=0, row=0, sticky='w', padx=50, ipady=10)
 entry_arquivo = Entry(janela)
-entry_arquivo.grid(column=0, row=0, padx=10)
+entry_arquivo.grid(column=1, row=0, padx=10)
 
+Label(janela, text='Diretório de salvamento do relatório:').grid(column=0, row=1, padx=50)
 entry_save = Entry(janela)
-entry_save.grid(column=0, row=1, padx=10)
+entry_save.grid(column=1, row=1, padx=10)
 
-button_arquivo = Button(janela, text='Selecionar arquivo xml', command=lambda:collect_arquivo(entry_arquivo)).grid(column=1, row=0)
-button_save = Button(janela, text='Selecionar pasta de salvamento', command=lambda:save_arquivo(entry_save)).grid(column=1, row=1)
-button_exec = Button(janela, text='Executar', command=lambda:executar(entry_arquivo.get(), entry_save.get())).grid(column=2, row=3)
-
-
+Button(janela, text='...', command=lambda: collect_arquivo(entry_arquivo)).grid(column=2, row=0)
+Button(janela, text='...', command=lambda: save_arquivo(entry_save)).grid(column=2, row=1)
+Button(janela, text='Executar', command=lambda: executar(entry_arquivo.get(), entry_save.get())).grid(column=3, row=3)
 
 janela.mainloop()
