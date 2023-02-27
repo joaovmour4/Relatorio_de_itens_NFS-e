@@ -14,74 +14,82 @@ def save_arquivo(entry):
 
 
 def executar(arquivo, directory):
-    wb = openpyxl.Workbook()
-    sheet = wb.active
+    label = Label(janela)
+    try:
+        wb = openpyxl.Workbook()
+        sheet = wb.active
 
-    xml = Et.parse(f'{arquivo}')
+        xml = Et.parse(f'{arquivo}')
 
-    root = xml.getroot()
-    i = 1
-    blueFill = openpyxl.styles.PatternFill(start_color='99CCFF',
-                                           end_color='99CCFF',
-                                           fill_type='solid')
+        root = xml.getroot()
+        i = 1
+        blue_fill = openpyxl.styles.PatternFill(start_color='99CCFF',
+                                                end_color='99CCFF',
+                                                fill_type='solid')
 
-    blue1Fill = openpyxl.styles.PatternFill(start_color='CCECFF',
-                                            end_color='CCECFF',
-                                            fill_type='solid')
+        blue1_fill = openpyxl.styles.PatternFill(start_color='CCECFF',
+                                                 end_color='CCECFF',
+                                                 fill_type='solid')
 
-    sheet.column_dimensions['B'].width = 16
-    sheet.column_dimensions['C'].width = 16
-    sheet.column_dimensions['D'].width = 30
-    sheet.column_dimensions['E'].width = 16
-    sheet.column_dimensions['F'].width = 25
+        sheet.column_dimensions['B'].width = 16
+        sheet.column_dimensions['C'].width = 16
+        sheet.column_dimensions['D'].width = 30
+        sheet.column_dimensions['E'].width = 16
+        sheet.column_dimensions['F'].width = 25
 
-    for nota in root:
-        cll_nota = sheet.cell(row=i, column=2)
-        sheet.merge_cells(f'B{i}:F{i}')
-        cll_nota.alignment = openpyxl.styles.Alignment(horizontal='center')
-        cll_nota.value = f'nota {nota.find("tcInfNFE")[0].text}'
-        cll_nota.fill = blueFill
-        i += 1
-        for elemento in nota:
-            if elemento.tag == 'tcInfNFE':
-                cll_elemento = sheet.cell(row=i, column=2)
-                for campo in elemento:
-                    if campo.tag == 'tcInfItens':
-                        cll_campo = sheet.cell(row=i, column=3)
-                        cll_campo.alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
-                        for item in campo:
-                            j = 2
-                            cll_item = sheet.cell(row=i, column=j)
-                            cll_item.fill = blue1Fill
-                            sheet.merge_cells(f'B{i}:F{i}')
-                            cll_item.alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
-                            cll_item.value = f'Informações do Item'
-                            i += 1
-                            for detalhe in item:
-                                cll_detalhe_info = sheet.cell(row=i, column=j)
-                                cll_detalhe = sheet.cell(row=i + 1, column=j)
-                                cll_detalhe.alignment = openpyxl.styles.Alignment(horizontal='center',
-                                                                                  vertical='center', wrapText=True)
-                                cll_detalhe_info.alignment = openpyxl.styles.Alignment(horizontal='center',
-                                                                                       vertical='center')
-                                j += 1
-                                match str(detalhe.tag):
-                                    case 'tsSeqItem':
-                                        cll_detalhe_info.value = f'ID item'
-                                    case 'tsQtdItem':
-                                        cll_detalhe_info.value = f'Quantidade'
-                                    case 'tsDesItem':
-                                        cll_detalhe_info.value = f'Descrição'
-                                    case 'tsVlrItem':
-                                        cll_detalhe_info.value = f'Valor do item'
-                                    case 'tsTotItem':
-                                        cll_detalhe_info.value = f'Valor total dos itens'
-                                cll_detalhe.value = f'{detalhe.text}'
-                            i += 3
-                        i += 2
-        i += 2
+        for nota in root:
+            cll_nota = sheet.cell(row=i, column=2)
+            sheet.merge_cells(f'B{i}:F{i}')
+            cll_nota.alignment = openpyxl.styles.Alignment(horizontal='center')
+            cll_nota.value = f'nota {nota.find("tcInfNFE")[0].text}'
+            cll_nota.fill = blue_fill
+            i += 1
+            for elemento in nota:
+                if elemento.tag == 'tcInfNFE':
+                    for campo in elemento:
+                        if campo.tag == 'tcInfItens':
+                            cll_campo = sheet.cell(row=i, column=3)
+                            cll_campo.alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
+                            for item in campo:
+                                j = 2
+                                cll_item = sheet.cell(row=i, column=j)
+                                cll_item.fill = blue1_fill
+                                sheet.merge_cells(f'B{i}:F{i}')
+                                cll_item.alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
+                                cll_item.value = f'Informações do Item'
+                                i += 1
+                                for detalhe in item:
+                                    cll_detalhe_info = sheet.cell(row=i, column=j)
+                                    cll_detalhe = sheet.cell(row=i + 1, column=j)
+                                    cll_detalhe.alignment = openpyxl.styles.Alignment(horizontal='center',
+                                                                                      vertical='center', wrapText=True)
+                                    cll_detalhe_info.alignment = openpyxl.styles.Alignment(horizontal='center',
+                                                                                           vertical='center')
+                                    j += 1
+                                    match str(detalhe.tag):
+                                        case 'tsSeqItem':
+                                            cll_detalhe_info.value = f'ID item'
+                                        case 'tsQtdItem':
+                                            cll_detalhe_info.value = f'Quantidade'
+                                        case 'tsDesItem':
+                                            cll_detalhe_info.value = f'Descrição'
+                                        case 'tsVlrItem':
+                                            cll_detalhe_info.value = f'Valor do item'
+                                        case 'tsTotItem':
+                                            cll_detalhe_info.value = f'Valor total dos itens'
+                                    cll_detalhe.value = f'{detalhe.text}'
+                                i += 3
+                            i += 2
+            i += 2
 
-    wb.save(f'{directory}/Relatorio-NFS-e_{root[0][0][3].text}.xlsx')
+        wb.save(f'{directory}/Relatorio-NFS-e_{root[0][0][3].text}.xlsx')
+        label.grid_forget()
+        label.configure(text='Arquivo gerado com sucesso!')
+        label.grid(column=0, row=4)
+    except Exception:
+        label.grid_forget()
+        label.configure(text='Erro nos diretórios, verifique e tente novamente')
+        label.grid(column=0, row=4)
 
 
 janela = Tk()
